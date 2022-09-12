@@ -305,6 +305,7 @@ workflows:
       - test-backend:
           requires: [build-backend]
       - scan-backend:
+          context: CI-notification-context
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
@@ -327,9 +328,3 @@ workflows:
       #     requires: [smoke-test]
       # - cleanup:
       #     requires: [cloudfront-update]
-      - slack/on-hold:
-          context: CI-notification-context
-          filters:
-            tags:
-              only: /^v.*/
-          requires: [scan-backend]
