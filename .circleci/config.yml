@@ -16,7 +16,6 @@ commands:
             aws s3 rm s3://udapeople-<<parameters.workflow_id>> --recursive
             aws cloudformation delete-stack --stack-name udapeople-backend-<<parameters.workflow_id>>
             aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameters.workflow_id>>
-
   revert-migrations:
     description: Revert the last migration
     parameters:
@@ -425,12 +424,12 @@ workflows:
       - build-frontend
       - build-backend:
           context:
-            - slack-secrets
+            - CI-notification-context
       - test-frontend:
           requires: [build-frontend]
       - test-backend:
           context:
-            - slack-secrets
+            - CI-notification-context
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
