@@ -136,7 +136,7 @@ jobs:
           name: Scan Front-end 
           command: |
             cd frontend
-            npm update
+            npm install
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
   scan-backend:
@@ -150,7 +150,7 @@ jobs:
           name: Scan Back-end 
           command: |
             cd backend
-            npm update
+            npm install
             npm audit fix --audit-level=critical --force
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
@@ -197,7 +197,6 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      
 #       Here's where you will add some code to rollback on failure      
       - destroy-environment
 
