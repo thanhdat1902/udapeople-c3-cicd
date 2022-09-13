@@ -111,7 +111,6 @@ jobs:
           name: Front-end Unit Test
           command: |
             cd frontend
-            npm install
             npm test
   test-backend:
     docker:
@@ -124,7 +123,6 @@ jobs:
           name: Back-end Unit Test
           command: |
             cd backend
-            npm install
             npm test
             
   scan-frontend:
@@ -138,7 +136,6 @@ jobs:
           name: Scan Front-end 
           command: |
             cd frontend
-            npm install
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
   scan-backend:
@@ -152,7 +149,6 @@ jobs:
           name: Scan Back-end 
           command: |
             cd backend
-            npm install
             npm audit fix --audit-level=critical --force
             npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
@@ -177,7 +173,7 @@ jobs:
               --template-file .circleci/files/backend.yml \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" \
-              --tags project=udapeople \
+              --tags project=udapeople
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -232,16 +228,33 @@ jobs:
       - run:
           name: Run migrations
           command: |
+            echo    ENVIRONMENT=production                                 > "backend/.env"
+            echo    TYPEORM_CONNECTION=postgres                            >> "backend/.env"
+            echo    TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts   >> "backend/.env"
+            echo    TYPEORM_MIGRATIONS=./src/migrations/*.ts               >> "backend/.env"
+            echo    TYPEORM_MIGRATIONS_DIR=./src/migrations                >> "backend/.env"
+            echo    NODE_ENV=production                                    >> "backend/.env"
+            echo    TYPEORM_HOST=$TYPEORM_HOST                             >> "backend/.env"
+            echo    TYPEORM_PORT=$TYPEORM_PORT                             >> "backend/.env"
+            echo    TYPEORM_USERNAME=$TYPEORM_USERNAME                     >> "backend/.env"
+            echo    TYPEORM_PASSWORD=$TYPEORM_PASSWORD                     >> "backend/.env"
+            echo    TYPEORM_DATABASE=$TYPEORM_DATABASE                     >> "backend/.env"
             cd backend
-            npm install
+            npm install typescript
             npm run migrations > migrations_dump.txt
+            echo migrations_dump.txt
       - run:
           name: Send migration status to kvdb.io
           command: |
+            cd backend
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
               curl https://kvdb.io/LBkqcJQGsVJRWJEhSsCbXr/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
+      - persist_to_workspace:
+          root: ~/
+          paths:
+              - project/backend/migrations_dump.txt
       - destroy-environment
       - revert-migrations     
 
@@ -302,11 +315,11 @@ jobs:
             cd backend
             npm run build
             cd ..
-            cd .circleci/ansible/roles/deploy
+            cd .circleci/ansible
             mkdir files
             cd files
-            tar -C ../../../../../backend -czvf artifact.tar.gz .
-
+            tar -C ../../../backend -czvf artifact.tar.gz .
+            cd ../
       - run:
           name: Deploy backend
           command: |
@@ -336,7 +349,7 @@ jobs:
             then
               exit 0
             else
-              exit 0
+              exit 1
             fi
       - run:
           name: Frontend smoke test.
@@ -344,7 +357,7 @@ jobs:
             FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
             if curl -s $FRONTEND_WEBSITE | grep "Welcome"
             then
-              exit 1
+              exit 0
             else
               exit 1
             fi
