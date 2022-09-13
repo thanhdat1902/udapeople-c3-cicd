@@ -1,0 +1,40 @@
+---
+- name: "upgrade packages"
+  become: true
+  apt:
+    upgrade: "yes"
+
+- name: "install dependencies"
+  become: true
+  apt:
+    name: ["nodejs", "npm"]
+    state: latest
+    update_cache: yes
+
+- name: "install pm2"
+  become: true
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
+
+- name: Creates directory
+  file:
+    path: /home/ubuntu/backend
+    state: directory
+
+- name: Unarchives the compressed artifact file
+  unarchive:
+    src: artifact.tar.gz
+    dest: /home/ubuntu/backend
+
+- name: Install dependencies
+  command: npm install
+  args:
+    chdir: /home/ubuntu/backend
+  
+- name: Use pm2 to run backend
+  command: pm2 start dist/main.js --name "backend" -i max
+  args:
+    chdir: /home/ubuntu/backend
