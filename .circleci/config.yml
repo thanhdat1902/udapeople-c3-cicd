@@ -226,6 +226,8 @@ jobs:
     steps:
       - checkout
       - install_awscli
+      - attach_workspace:
+          at: ~/
       - run:
           name: Run migrations
           command: |
