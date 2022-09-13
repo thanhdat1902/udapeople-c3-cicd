@@ -282,9 +282,9 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
+      - install_nodejs
       - install_awscli
       - install_ansible
-      - install_nodejs
       - add_ssh_keys:
           fingerprints: ["19:00:c4:2b:36:ac:ec:38:d8:6e:90:3d:9c:c4:23:9c"]
       - attach_workspace:
@@ -301,9 +301,12 @@ jobs:
           command: |
             cd backend
             npm run build
-            tar czf artifact.tar.gz dist/* package*
             cd ..
-            cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
+            cd .circleci/ansible/roles/deploy
+            mkdir files
+            cd files
+            tar -C ../../../../../backend -czvf artifact.tar.gz
+
       - run:
           name: Deploy backend
           command: |
