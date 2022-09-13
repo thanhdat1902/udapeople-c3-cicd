@@ -1,0 +1,14 @@
+
+> glee2@1.0.0 premigrations
+> npm run build
+
+
+> glee2@1.0.0 build
+> tsc
+
+node_modules/@nestjs/common/module-utils/interfaces/configurable-module-async-options.interface.d.ts(9,116): error TS1005: '>' expected.
+node_modules/@nestjs/common/module-utils/interfaces/configurable-module-async-options.interface.d.ts(9,173): error TS1005: '(' expected.
+node_modules/@nestjs/common/module-utils/interfaces/configurable-module-async-options.interface.d.ts(9,189): error TS1109: Expression expected.
+node_modules/@nestjs/common/module-utils/interfaces/configurable-module-cls.interface.d.ts(13,12): error TS1005: '>' expected.
+node_modules/@nestjs/common/module-utils/interfaces/configurable-module-cls.interface.d.ts(13,102): error TS1109: Expression expected.
+node_modules/@nestjs/common/module-utils/interfaces/configurable-module-cls.interface.d.ts(13,260): error TS1109: Expression expected.
