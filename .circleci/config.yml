@@ -373,7 +373,7 @@ jobs:
             echo Current WorkflowID: "${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy-environment
       - revert-migrations
-cleanup:
+  cleanup:
     docker:
       - image: cimg/base:stable
     steps:
